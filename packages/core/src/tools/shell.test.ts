@@ -44,7 +44,6 @@ import { ToolErrorType } from './tool-error.js';
 import { ToolConfirmationOutcome } from './tools.js';
 import { OUTPUT_UPDATE_INTERVAL_MS } from './shell.js';
 import { createMockWorkspaceContext } from '../test-utils/mockWorkspaceContext.js';
-import { SHELL_TOOL_NAME } from './tool-names.js';
 
 const originalComSpec = process.env['ComSpec'];
 const itWindowsOnly = process.platform === 'win32' ? it : it.skip;
@@ -65,13 +64,19 @@ describe('ShellTool', () => {
       getExcludeTools: vi.fn().mockReturnValue([]),
       getDebugMode: vi.fn().mockReturnValue(false),
       getTargetDir: vi.fn().mockReturnValue('/test/dir'),
-      getSummarizeToolOutputConfig: vi.fn().mockReturnValue(undefined),
       getWorkspaceContext: vi
         .fn()
         .mockReturnValue(createMockWorkspaceContext('/test/dir')),
       getGeminiClient: vi.fn(),
       getEnableInteractiveShell: vi.fn().mockReturnValue(false),
       isInteractive: vi.fn().mockReturnValue(true),
+      getEnableToolOutputTruncation: vi.fn().mockReturnValue(false),
+      generationConfigService: {
+        getResolvedConfig: vi.fn().mockResolvedValue({
+          model: 'mock-model',
+          config: {},
+        }),
+      },
     } as unknown as Config;
 
     shellTool = new ShellTool(mockConfig);
@@ -306,8 +311,16 @@ describe('ShellTool', () => {
     });
 
     it('should summarize output when configured', async () => {
-      (mockConfig.getSummarizeToolOutputConfig as Mock).mockReturnValue({
-        [SHELL_TOOL_NAME]: { tokenBudget: 1000 },
+      (mockConfig.getEnableToolOutputTruncation as Mock).mockReturnValue(true);
+      (
+        mockConfig.generationConfigService.getResolvedConfig as Mock
+      ).mockReturnValue({
+        model: 'mock-model',
+        config: {
+          temperature: 0.5,
+        },
+        summarize: true,
+        tokenBudget: 1000,
       });
       vi.mocked(summarizer.summarizeToolOutput).mockResolvedValue(
         'summarized output',
@@ -332,7 +345,14 @@ describe('ShellTool', () => {
         expect.any(String),
         mockConfig.getGeminiClient(),
         mockAbortSignal,
-        1000,
+        {
+          model: 'mock-model',
+          config: {
+            temperature: 0.5,
+          },
+          summarize: true,
+          tokenBudget: 1000,
+        },
       );
       expect(result.llmContent).toBe('summarized output');
       expect(result.returnDisplay).toBe('long output');

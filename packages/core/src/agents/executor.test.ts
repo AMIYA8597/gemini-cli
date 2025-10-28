@@ -37,10 +37,12 @@ import type {
 import { AgentTerminateMode } from './types.js';
 import type { AnyDeclarativeTool, AnyToolInvocation } from '../tools/tools.js';
 
-const { mockSendMessageStream, mockExecuteToolCall } = vi.hoisted(() => ({
-  mockSendMessageStream: vi.fn(),
-  mockExecuteToolCall: vi.fn(),
-}));
+const { mockSendMessageStream, mockExecuteToolCall, mockSetSystemInstruction } =
+  vi.hoisted(() => ({
+    mockSendMessageStream: vi.fn(),
+    mockExecuteToolCall: vi.fn(),
+    mockSetSystemInstruction: vi.fn(),
+  }));
 
 vi.mock('../core/geminiChat.js', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../core/geminiChat.js')>();
@@ -194,6 +196,8 @@ describe('AgentExecutor', () => {
       () =>
         ({
           sendMessageStream: mockSendMessageStream,
+          setSystemInstruction: mockSetSystemInstruction,
+          setTools: vi.fn(),
         }) as unknown as GeminiChat,
     );
 
@@ -367,10 +371,7 @@ describe('AgentExecutor', () => {
       const output = await executor.run(inputs, signal);
 
       expect(mockSendMessageStream).toHaveBeenCalledTimes(2);
-
-      const chatConstructorArgs = MockedGeminiChat.mock.calls[0];
-      const chatConfig = chatConstructorArgs[1];
-      expect(chatConfig?.systemInstruction).toContain(
+      expect(mockSetSystemInstruction.mock.calls[0][0]).toContain(
         `MUST call the \`${TASK_COMPLETE_TOOL_NAME}\` tool`,
       );
 

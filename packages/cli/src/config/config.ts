@@ -682,7 +682,6 @@ export async function loadCliConfig(
     extensionLoader: extensionManager,
     blockedMcpServers,
     noBrowser: !!process.env['NO_BROWSER'],
-    summarizeToolOutput: settings.model?.summarizeToolOutput,
     ideMode,
     chatCompression: settings.model?.chatCompression,
     folderTrust,
@@ -710,6 +709,7 @@ export async function loadCliConfig(
     recordResponses: argv.recordResponses,
     retryFetchErrors: settings.general?.retryFetchErrors ?? false,
     ptyInfo: ptyInfo?.name,
+    generation: settings.generation,
   });
 }
 

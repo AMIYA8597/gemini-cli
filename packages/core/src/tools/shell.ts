@@ -292,7 +292,7 @@ export class ShellToolInvocation extends BaseToolInvocation<
         }
       }
 
-      const summarizeConfig = this.config.getSummarizeToolOutputConfig();
+      const enableSummarization = this.config.getEnableToolOutputTruncation();
       const executionError = result.error
         ? {
             error: {
@@ -301,12 +301,16 @@ export class ShellToolInvocation extends BaseToolInvocation<
             },
           }
         : {};
-      if (summarizeConfig && summarizeConfig[SHELL_TOOL_NAME]) {
+      if (enableSummarization) {
+        const resolvedConfig =
+          this.config.generationConfigService.getResolvedConfig({
+            model: 'summarizer-shell',
+          });
         const summary = await summarizeToolOutput(
           llmContent,
           this.config.getGeminiClient(),
           signal,
-          summarizeConfig[SHELL_TOOL_NAME].tokenBudget,
+          resolvedConfig,
         );
         return {
           llmContent: summary,

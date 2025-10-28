@@ -1,0 +1,136 @@
+{
+  "base": {
+    "sdkConfig": {
+      "temperature": 0,
+      "topP": 1,
+      "thinkingConfig": {
+        "includeThoughts": true,
+        "thinkingBudget": -1
+      }
+    }
+  },
+  "gemini-2.5-pro": {
+    "model": "gemini-2.5-pro",
+    "sdkConfig": {
+      "temperature": 0,
+      "topP": 1,
+      "thinkingConfig": {
+        "includeThoughts": true,
+        "thinkingBudget": -1
+      }
+    }
+  },
+  "gemini-2.5-flash": {
+    "model": "gemini-2.5-flash",
+    "sdkConfig": {
+      "temperature": 0,
+      "topP": 1,
+      "thinkingConfig": {
+        "includeThoughts": true,
+        "thinkingBudget": -1
+      }
+    }
+  },
+  "gemini-2.5-flash-lite": {
+    "model": "gemini-2.5-flash-lite",
+    "sdkConfig": {
+      "temperature": 0,
+      "topP": 1,
+      "thinkingConfig": {
+        "includeThoughts": true,
+        "thinkingBudget": -1
+      }
+    }
+  },
+  "classifier": {
+    "model": "gemini-2.5-flash-lite",
+    "sdkConfig": {
+      "temperature": 0,
+      "topP": 1,
+      "thinkingConfig": {
+        "includeThoughts": true,
+        "thinkingBudget": 512
+      },
+      "maxOutputTokens": 1024
+    }
+  },
+  "prompt-completion": {
+    "model": "gemini-2.5-flash-lite",
+    "sdkConfig": {
+      "temperature": 0.3,
+      "topP": 1,
+      "thinkingConfig": {
+        "includeThoughts": true,
+        "thinkingBudget": 0
+      },
+      "maxOutputTokens": 16000
+    }
+  },
+  "edit-corrector": {
+    "model": "gemini-2.5-flash-lite",
+    "sdkConfig": {
+      "temperature": 0,
+      "topP": 1,
+      "thinkingConfig": {
+        "includeThoughts": true,
+        "thinkingBudget": 0
+      }
+    }
+  },
+  "summarizer-default": {
+    "model": "gemini-2.5-flash-lite",
+    "sdkConfig": {
+      "temperature": 0,
+      "topP": 1,
+      "thinkingConfig": {
+        "includeThoughts": true,
+        "thinkingBudget": -1
+      },
+      "maxOutputTokens": 2000
+    }
+  },
+  "summarizer-shell": {
+    "model": "gemini-2.5-flash-lite",
+    "sdkConfig": {
+      "temperature": 0,
+      "topP": 1,
+      "thinkingConfig": {
+        "includeThoughts": true,
+        "thinkingBudget": -1
+      },
+      "maxOutputTokens": 2000
+    }
+  },
+  "web-search-tool": {
+    "model": "gemini-2.5-flash",
+    "sdkConfig": {
+      "temperature": 0,
+      "topP": 1,
+      "thinkingConfig": {
+        "includeThoughts": true,
+        "thinkingBudget": -1
+      },
+      "tools": [
+        {
+          "googleSearch": {}
+        }
+      ]
+    }
+  },
+  "web-fetch-tool": {
+    "model": "gemini-2.5-flash",
+    "sdkConfig": {
+      "temperature": 0,
+      "topP": 1,
+      "thinkingConfig": {
+        "includeThoughts": true,
+        "thinkingBudget": -1
+      },
+      "tools": [
+        {
+          "urlContext": {}
+        }
+      ]
+    }
+  }
+}
