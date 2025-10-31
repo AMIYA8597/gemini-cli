@@ -500,11 +500,15 @@ export class GeminiChat {
     let hasToolCall = false;
     let hasFinishReason = false;
 
+    const outputContent: Content[] = [];
     for await (const chunk of streamResponse) {
       hasFinishReason =
         chunk?.candidates?.some((candidate) => candidate.finishReason) ?? false;
       if (isValidResponse(chunk)) {
         const content = chunk.candidates?.[0]?.content;
+        if (content !== undefined) {
+          outputContent.push(content);
+        }
         if (content?.parts) {
           if (content.parts.some((part) => part.thought)) {
             // Record thoughts
@@ -582,7 +586,25 @@ export class GeminiChat {
       }
     }
 
-    this.history.push({ role: 'model', parts: consolidatedParts });
+    this.recordHistory(outputContent);
+  }
+
+  private recordHistory(modelOutput: Content[]) {
+    let outputContents: Content[] = [];
+    if (
+      modelOutput.length > 0 &&
+      modelOutput.every((content) => content.role !== undefined)
+    ) {
+      outputContents = modelOutput;
+    } else {
+      // Appends an empty content when model returns empty response, so that the
+      // history is always alternating between user and model.
+      outputContents.push({
+        role: 'model',
+        parts: [],
+      } as Content);
+    }
+    this.history.push(...outputContents);
   }
 
   getLastPromptTokenCount(): number {
